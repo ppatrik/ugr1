@@ -1,0 +1,14 @@
+Ukazkovy program na 4. cvicenie
+===============================
+Program sa ovlada nasledovne:
+x/X - otocenie okolo osi X
+c/C - otocenie okolo osi Y
+z/Z - otocenie okolo osi Z
+a/A - posun v smere osi X
+s/S - posun v smere osi Y
+d/D - posun v smere osi Z
+1 - prepnutie na wireframe (CV04_01)
+2 - prepnutie na vyplnene steny (CV04_02)
+3 - prepnutie na tienovane steny (CV04_E02)
+4 - prepnutie na tienovane steny a zobrazenie normal
+q - vypnutie programu
