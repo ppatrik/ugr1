@@ -1,1 +1,1 @@
-bin\dosbox.exe "root\autoexec.bat" -conf "dosbox.conf" -noconsole -exit
+bin\dosbox.exe "root\autoexec.bat" -conf "dosbox.conf" -noconsole
