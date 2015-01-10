@@ -44,7 +44,7 @@ public class c6u5b {
         glViewport(0, 0, sirka, vyska); // Reset The Current Viewport
         glMatrixMode(GL_PROJECTION); // Select The Projection Matrix
         glLoadIdentity(); // Reset The Projection Matrix
-        gluPerspective(45.0f, ((float) sirka / (float) vyska), 0.1f, 100.0f); // Calculate The Aspect Ratio Of The Window
+        gluPerspective(45.0f, ((float) sirka / (float) vyska), 0.001f, 100.0f); // Calculate The Aspect Ratio Of The Window
         glMatrixMode(GL_MODELVIEW); // Select The Modelview Matrix
 
         textura_stena = (TextureLoader.getTexture("JPG", ResourceLoader.getResourceAsStream("stena.jpg")).getTextureID());
@@ -83,12 +83,7 @@ public class c6u5b {
                     start = false;
                     x = r + 0.5f;
                     z = s + 0.5f;
-                    // TODO: pociatocne natocenie na volne policko
-                    /*if (r + 1 < mapa.length && mapa[r + 1][s]) {
-                        angle = (float) (Math.PI);
-                    } else if(s + 1 < mapa[0].length && mapa[r][s + 1]) {*/
                     angle = (float) (Math.PI) / 2;
-                    //}
                     lx = (float) Math.sin(angle);
                     lz = (float) -Math.cos(angle);
                     break;
@@ -118,7 +113,6 @@ public class c6u5b {
     float x = 0.0f, z = 0.0f;
 
     private void spracujVstup() throws Exception {
-        // todo zobrazenie mapy (dajme tomu ze zhora, a vypne sa horna stena)
         if (isKeyDown(KEY_ESCAPE) || Display.isCloseRequested())
             closeRequested = true;
 

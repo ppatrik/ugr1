@@ -1,5 +1,6 @@
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
+import org.lwjgl.opengl.GL11;
 import org.newdawn.slick.opengl.TextureLoader;
 import org.newdawn.slick.util.ResourceLoader;
 
@@ -35,7 +36,7 @@ public class c6u4b {
         glViewport(0, 0, sirka, vyska); // Reset The Current Viewport
         glMatrixMode(GL_PROJECTION); // Select The Projection Matrix
         glLoadIdentity(); // Reset The Projection Matrix
-        gluPerspective(45.0f, ((float) sirka / (float) vyska), 0.1f, 100.0f); // Calculate The Aspect Ratio Of The Window
+        gluPerspective(45.0f, ((float) sirka / (float) vyska), 0.1f, 200.0f); // Calculate The Aspect Ratio Of The Window
         glMatrixMode(GL_MODELVIEW); // Select The Modelview Matrix
 
         textura_podstava = (TextureLoader.getTexture("JPG", ResourceLoader.getResourceAsStream("podstava.jpg")).getTextureID());
@@ -50,9 +51,6 @@ public class c6u4b {
 
         glEnable(GL_TEXTURE_2D);
         glEnable(GL_DEPTH_TEST);
-
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
     }
 
     public void spusti() throws Exception {
@@ -127,6 +125,9 @@ public class c6u4b {
     }
 
     private void svet(int s, int w) {
+
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
         // back
         glBindTexture(GL_TEXTURE_2D, textura_svet_back);
         glBegin(GL_POLYGON);
@@ -140,6 +141,8 @@ public class c6u4b {
         glVertex3f(s, s, s);
         glEnd();
 
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
         // right
         glBindTexture(GL_TEXTURE_2D, textura_svet_right);
         glBegin(GL_POLYGON);
@@ -153,6 +156,8 @@ public class c6u4b {
         glVertex3f(s + w, s, s);
         glEnd();
 
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
         // front
         glBindTexture(GL_TEXTURE_2D, textura_svet_front);
         glBegin(GL_POLYGON);
@@ -166,6 +171,9 @@ public class c6u4b {
         glVertex3f(s + w, s, s + w);
         glEnd();
 
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+        glDrawBuffer(GL_LEFT);
         // left
         glBindTexture(GL_TEXTURE_2D, textura_svet_left);
         glBegin(GL_POLYGON);
@@ -179,6 +187,8 @@ public class c6u4b {
         glVertex3f(s, s, s + w);
         glEnd();
 
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
         // top
         glBindTexture(GL_TEXTURE_2D, textura_svet_top);
         glBegin(GL_POLYGON);
@@ -192,6 +202,8 @@ public class c6u4b {
         glVertex3f(s + w, s + w, s);
         glEnd();
 
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
         // bottom
         glBindTexture(GL_TEXTURE_2D, textura_svet_bottom);
         glBegin(GL_POLYGON);
