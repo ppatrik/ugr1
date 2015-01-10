@@ -1,5 +1,6 @@
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
+import org.lwjgl.opengl.GL11;
 import org.newdawn.slick.opengl.TextureLoader;
 import org.newdawn.slick.util.ResourceLoader;
 
@@ -31,9 +32,14 @@ public class c6u5b {
 
     boolean[][] mapa;
 
+    int width;
+    int height;
+
     private void inicializujGL() throws Exception {
         int sirka = Display.getDisplayMode().getWidth();
         int vyska = Display.getDisplayMode().getHeight();
+        width = sirka;
+        height = vyska;
 
         glViewport(0, 0, sirka, vyska); // Reset The Current Viewport
         glMatrixMode(GL_PROJECTION); // Select The Projection Matrix
@@ -48,23 +54,48 @@ public class c6u5b {
         glEnable(GL_TEXTURE_2D);
         glEnable(GL_DEPTH_TEST);
 
+        glMatrixMode(GL_PROJECTION);
+        glPushMatrix();
+        gluPerspective(45f, (float) width / height, .1f, 100f);
+        glMatrixMode(GL_MODELVIEW);
+        glPushMatrix();
+        glLoadIdentity();
+
+        loadMap("mapa.txt");
+    }
+
+    public void loadMap(String fileName) {
         List<String> lines = new ArrayList<String>();
-        Scanner fileScanner = new Scanner(getClass().getResourceAsStream("mapa.txt"));
+        Scanner fileScanner = new Scanner(getClass().getResourceAsStream(fileName));
         while (fileScanner.hasNextLine()) {
             lines.add(fileScanner.nextLine());
-            System.out.println(lines.get(lines.size() - 1));
         }
         mapa = new boolean[lines.size()][lines.get(0).length()];
-        boolean start = true;
         for (int r = 0; r < mapa.length; r++) {
             for (int s = 0; s < mapa[r].length; s++) {
                 mapa[r][s] = lines.get(r).charAt(s) != '#';
-                if(start && mapa[r][s]) {
+            }
+        }
+        boolean start = true;
+        for (int r = 0; r < mapa.length; r++) {
+            for (int s = 0; s < mapa[r].length; s++) {
+                if (start && mapa[r][s]) {
                     start = false;
-                    x = r * 2;
-                    z = s * 2;
+                    x = r + 0.5f;
+                    z = s + 0.5f;
+                    // TODO: pociatocne natocenie na volne policko
+                    /*if (r + 1 < mapa.length && mapa[r + 1][s]) {
+                        angle = (float) (Math.PI);
+                    } else if(s + 1 < mapa[0].length && mapa[r][s + 1]) {*/
+                    angle = (float) (Math.PI) / 2;
+                    //}
+                    lx = (float) Math.sin(angle);
+                    lz = (float) -Math.cos(angle);
+                    break;
                 }
             }
+            if (!start)
+                break;
         }
     }
 
@@ -87,6 +118,7 @@ public class c6u5b {
     float x = 0.0f, z = 0.0f;
 
     private void spracujVstup() throws Exception {
+        // todo zobrazenie mapy (dajme tomu ze zhora, a vypne sa horna stena)
         if (isKeyDown(KEY_ESCAPE) || Display.isCloseRequested())
             closeRequested = true;
 
@@ -112,14 +144,51 @@ public class c6u5b {
             x -= lx * fraction;
             z -= lz * fraction;
         }
-        if(!mapa[(int)x][(int)z]) {
-            x = xb;
-            z = zb;
-        }
-        // TODO: urobit kontrolu ci je este v priestore alebo by siel mimo
         // kontrola ci nevysiel z mapy
         x = x > mapa.length ? mapa.length : (x < 0 ? 0 : x);
         z = z > mapa[0].length ? mapa[0].length : (z < 0 ? 0 : z);
+
+        if (!mapa[(int) x][(int) z]) {
+            if (!mapa[(int) x][(int) zb])
+                x = xb;
+            if (!mapa[(int) xb][(int) z])
+                z = zb;
+
+        }
+
+        Thread.sleep(1);
+    }
+
+    protected void make2D() {
+        /*glMatrixMode(GL_PROJECTION);
+        //glPopMatrix();
+        glLoadIdentity();
+        glOrtho(0, 1280, 720, 0, -1, 1);
+        glMatrixMode(GL_MODELVIEW);
+        //glPopMatrix();
+        glLoadIdentity();*/
+
+
+        //Remove the Z axis
+        //GL11.glDisable(GL11.GL_LIGHTING);
+        GL11.glDisable(GL11.GL_DEPTH_TEST);
+        GL11.glMatrixMode(GL11.GL_PROJECTION);
+        GL11.glPushMatrix();
+        GL11.glLoadIdentity();
+        GL11.glOrtho(0, width, 0, height, -1, 1);
+        GL11.glMatrixMode(GL11.GL_MODELVIEW);
+        GL11.glPushMatrix();
+        GL11.glLoadIdentity();
+    }
+
+    protected void make3D() {
+        //Restore the Z axis
+        GL11.glMatrixMode(GL11.GL_PROJECTION);
+        GL11.glPopMatrix();
+        GL11.glMatrixMode(GL11.GL_MODELVIEW);
+        GL11.glPopMatrix();
+        GL11.glEnable(GL11.GL_DEPTH_TEST);
+        //GL11.glDisable(GL11.GL_LIGHTING);
 
         // Reset transformations
         glLoadIdentity();
@@ -128,12 +197,13 @@ public class c6u5b {
                 x + lx, 0f, z + lz,
                 0.0f, 2f, 0.0f);
 
-        Thread.sleep(1);
     }
 
     private void vykresliGL() {
 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+        make3D();
 
         podlaha(0, mapa.length, mapa[0].length);
         strop(0, mapa.length, mapa[0].length);
@@ -146,6 +216,30 @@ public class c6u5b {
             }
         }
 
+
+        // hud
+        make2D();
+
+        glPointSize(5f);
+        glBegin(GL_POINTS);
+        for (int r = 0; r < mapa.length; r++) {
+            for (int s = 0; s < mapa[r].length; s++) {
+                if (mapa[r][s]) {
+                    glColor3f(0.9f, 0.9f, 0.9f);
+                } else {
+                    glColor3f(0.5f, 0, 0);
+                }
+                glVertex2f(10 + s * 5, 10 + r * 5);
+            }
+        }
+        glEnd();
+        glColor3f(0, 0, 0);
+        glPointSize(2);
+        glBegin(GL_POINTS);
+        glVertex2f(10 + z * 5 - 2.5f, 10 + x * 5 - 2.5f);
+        glEnd();
+
+        glColor3f(1f, 1f, 1f);
     }
 
     private void stena(int ax, int az) {
